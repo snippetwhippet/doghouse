@@ -1,0 +1,14 @@
+# Getting list of failed tests from a build using Jenkins API
+
+for BUILD in {15..17} ; do
+
+  echo -e "\nFailed tests from build #${BUILD}"
+
+  curl -so consoleText.txt "<URL_TO_JENKINS_JOB>"
+
+  grep '.chrome.*FAILED' consoleText.txt | egrep -o 'chrome #[0-9]+-[0-9]+' | while read TEST ; do
+    grep "^.${TEST}] Specs:" consoleText.txt |
+      sed 's/^.*\/var\/lib\/jenkins\/workspace\/<JOB_NAME>/  /'
+  done | sort
+
+done
